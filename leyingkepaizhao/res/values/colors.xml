@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    	<!-- LIST BORDER COLOR -->
+	<color name="rounded_container_border">#ffb7babb</color>
+
+	<!-- ITEM BACKGROUND COLOR - STATE - DEFAULT -->
+	<color name="base_start_color_default">#FFFFFF</color>
+    <color name="base_end_color_default">#FFFFFF</color>
+    	
+	<!-- ITEM BACKGROUND COLOR - STATE - PRESSED -->
+	<color name="base_start_color_pressed">#ff3590c4</color>
+    <color name="base_end_color_pressed">#ff2570ba</color>
+    
+    <!-- ITEM TEXT COLORS - STATES - PRESSED AND DEFAULT -->
+    <color name="text_color_default">#000000</color>
+    <color name="text_color_pressed">#ffffff</color>
+    
+    
+    
+    <color name="transparent">#00000000</color>
+    <color name="titletextcolor">#ffffffff</color>
+	<color name="RGB_210_27_27">#ff2727</color>
+	<color name="RGB_116_35_25">#742319</color>
+	<color name="RGB_A2A2A2">#A2A2A2</color>
+	<color name="RGB_F9F9F9">#F9F9F9</color>
+	<color name="RGB_E6E6E6">#E6E6E6</color>
+	<color name="header">#ff33b5e5</color>
+	
+	
+	<color name="white">#FFFFFF</color>
+	<color name="black">#000000</color>
+	<color name="gray">#808080</color>
+	<color name="red">#FF0000</color>
+	<color name="gold">#FFD700</color>
+	<color name="yellow">#FFFF00</color>
+	<color name="green">#008000</color>
+	<color name="blue">#0000FF</color>
+	<color name="purple">#800080</color>
+	<color name="pink">#FFC0CB</color>
+	<color name="orange">#FFA500</color>
+	<color name="lemonyellow">#FFFACD</color>
+	<color name="graywhite">#F5F5F5</color>
+	<color name="grayslate">#708090</color>
+	<color name="lightblue">#0083FF</color>
+	<color name="full_transparent">#00000000</color>
+	
+	<color name="rgb_gray_224">#E0E0E0</color>
+	<color name="rgb_blue_33">#21749C</color>
+	<color name="rgb_line">#C1C1C1</color>
+	<color name="rgb_yellow">#FF9E00</color>
+	<color name="rgb_gray_85">#858585</color>
+	<color name="rgb_red">#C83232</color>
+	<color name="rgb_blue">#21739D</color>
+	<color name="rgb_gray_145">#919191</color>
+	<color name="rgb_gray_169">#A9A9A9</color>
+	<color name="rgb_green">#69AE06</color>
+	<color name="rgb_unpublished">#20739D</color>
+	<color name="rgb_green_134">#86DE06</color>
+	<color name="rgb_246_42_191">#F62ABF</color>
+	<color name="rgb_104_179_5">#68B305</color>
+	
+	<color name="seat_bg">#f0f0e8</color>
+	<color name="pay_text_orange">#F8B551</color>
+	<color name="pay_item_bg1">#FCF3D2</color>
+	<color name="pay_item_bg2">#FAF5E1</color>
+	<color name="pay_text_blue">#C1DFEC</color>
+	<color name="pay_point">#57B5DE</color>
+</resources>

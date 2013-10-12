@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="indicator_right_padding">10dp</dimen>
+    <dimen name="indicator_corner_radius">12dp</dimen>
+    <dimen name="indicator_internal_padding">4dp</dimen>
+    <dimen name="bottom_tab_font_size">10.0dip</dimen>
+    <dimen name="bottom_tab_padding_drawable">1.0dip</dimen>
+    <dimen name="bottom_tab_padding_up">12.0dip</dimen>
+    
+    <dimen name="session_inquires_list_item_height">48dip</dimen>
+    
+    <dimen name="text_size_40">23.0sp</dimen>
+    <dimen name="text_size_32">19.0sp</dimen>
+    <dimen name="text_size_28">17.0sp</dimen>
+    <dimen name="text_size_26">16.0sp</dimen>
+    <dimen name="text_size_24">15.0sp</dimen>
+    <dimen name="text_size_22">14.0sp</dimen>
+    <dimen name="text_size_20">13.0sp</dimen>
+    <dimen name="text_size_18">12.0sp</dimen>
+    <dimen name="text_size_16">11.0sp</dimen>
+    <dimen name="text_size_14">10.0sp</dimen>
+    <dimen name="text_size_12">8.0sp</dimen>
+    <dimen name="space_4px">2dip</dimen>
+    <dimen name="space_5px">3dip</dimen>
+    <dimen name="space_6px">4dip</dimen>
+    <dimen name="space_8px">5dip</dimen>
+    <dimen name="space_10px">7dip</dimen>
+    <dimen name="space_15px">10dip</dimen>
+    <dimen name="space_20px">13dip</dimen>
+    <dimen name="space_25px">17dip</dimen>
+    <dimen name="space_30px">20dip</dimen>
+    <dimen name="space_40px">27dip</dimen>
+    <dimen name="space_56px">37dip</dimen>
+    <dimen name="space_60px">40dip</dimen>
+    <dimen name="space_80px">50dip</dimen>
+    <dimen name="space_90px">60dip</dimen>
+    
+    <dimen name="space_30">30.0dip</dimen>
+    <dimen name="space_29">29.0dip</dimen>
+    <dimen name="space_28">28.0dip</dimen>
+    <dimen name="space_27">27.0dip</dimen>
+    <dimen name="space_26">26.0dip</dimen>
+    <dimen name="space_25">25.0dip</dimen>
+    <dimen name="space_24">24.0dip</dimen>
+    <dimen name="space_23">23.0dip</dimen>
+    <dimen name="space_22">22.0dip</dimen>
+    <dimen name="space_21">21.0dip</dimen>
+    <dimen name="space_20">20.0dip</dimen>
+    <dimen name="space_19">19.0dip</dimen>
+    <dimen name="space_18">18.0dip</dimen>
+    <dimen name="space_17">17.0dip</dimen>
+    <dimen name="space_16">16.0dip</dimen>
+    <dimen name="space_15">15.0dip</dimen>
+    <dimen name="space_14">14.0dip</dimen>
+    <dimen name="space_13">13.0dip</dimen>
+    <dimen name="space_12">12.0dip</dimen>
+    <dimen name="space_11">11.0dip</dimen>
+    <dimen name="space_10">10.0dip</dimen>
+    <dimen name="space_9">9.0dip</dimen>
+    <dimen name="space_8">8.0dip</dimen>
+    <dimen name="space_7">7.0dip</dimen>
+    <dimen name="space_6">6.0dip</dimen>
+    <dimen name="space_5">5.0dip</dimen>
+    <dimen name="space_4">4.0dip</dimen>
+    <dimen name="space_3">3.0dip</dimen>
+    <dimen name="space_2">2.0dip</dimen>
+    <dimen name="space_1">1.0dip</dimen>
+    
+    <dimen name="thumbnail_size">50dp</dimen>
+    <dimen name="thumbnail_radius">7dp</dimen>
+    
+    <dimen name="thumbnail_45">45dp</dimen>
+    <dimen name="thumbnail_50">50dp</dimen>
+    <dimen name="thumbnail_55">55dp</dimen>
+    <dimen name="thumbnail_60">60dp</dimen>
+    <dimen name="thumbnail_65">65dp</dimen>
+    <dimen name="thumbnail_70">70dp</dimen>
+    <dimen name="thumbnail_100">100dp</dimen>
+</resources>
