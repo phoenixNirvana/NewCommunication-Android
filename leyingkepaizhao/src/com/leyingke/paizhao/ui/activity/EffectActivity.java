@@ -1,4 +1,4 @@
-package com.leyingke.paizhao.ui;
+package com.leyingke.paizhao.ui.activity;
 
 
 import android.app.Activity;

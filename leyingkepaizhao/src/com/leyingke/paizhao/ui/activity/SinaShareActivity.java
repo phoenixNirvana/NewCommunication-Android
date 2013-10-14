@@ -1,4 +1,4 @@
-package com.leyingke.paizhao.ui;
+package com.leyingke.paizhao.ui.activity;
 
 import java.io.IOException;
 
@@ -63,11 +63,11 @@ public class SinaShareActivity extends BaseActivity implements OnClickListener, 
 	public void onComplete(String arg0) {
 		
 		closeProgressDialog();
-		Log.e("i", "Î¢²©·µ»ØµÄÊý¾Ý£º" + arg0);
+		Log.e("i", "Î¢ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½Ý£ï¿½" + arg0);
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(SinaShareActivity.this, "Î¢²©·¢ËÍ³É¹¦", 3000).show();
+				Toast.makeText(SinaShareActivity.this, "Î¢ï¿½ï¿½ï¿½ï¿½ï¿½Í³É¹ï¿½", 3000).show();
 			}
 		});
 		this.finish();
@@ -75,13 +75,13 @@ public class SinaShareActivity extends BaseActivity implements OnClickListener, 
 
 	@Override
 	public void onError(WeiboException arg0) {
-		Toast.makeText(SinaShareActivity.this, "·¢ËÍÊ§°Ü", 3000).show();
+		Toast.makeText(SinaShareActivity.this, "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½", 3000).show();
 		closeProgressDialog();
 	}
 
 	@Override
 	public void onIOException(IOException arg0) {
-		Toast.makeText(SinaShareActivity.this, "·¢ËÍÊ§°Ü", 3000).show();
+		Toast.makeText(SinaShareActivity.this, "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½", 3000).show();
 		closeProgressDialog();
 	}
 

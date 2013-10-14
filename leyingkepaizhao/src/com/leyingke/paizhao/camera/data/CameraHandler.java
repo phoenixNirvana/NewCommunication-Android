@@ -1,8 +1,8 @@
 package com.leyingke.paizhao.camera.data;
 
 
-import com.leyingke.paizhao.ui.CameraActivity;
-import com.leyingke.paizhao.ui.EffectActivity;
+import com.leyingke.paizhao.ui.activity.CameraActivity;
+import com.leyingke.paizhao.ui.activity.EffectActivity;
 import com.leyingke.paizhao.utils.Logger;
 
 import android.content.Intent;

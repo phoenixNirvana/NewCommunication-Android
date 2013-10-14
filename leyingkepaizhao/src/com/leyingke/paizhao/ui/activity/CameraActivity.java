@@ -1,4 +1,4 @@
-package com.leyingke.paizhao.ui;
+package com.leyingke.paizhao.ui.activity;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,7 +132,6 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		CameraManager.get().setHandler(mHandler);
 		
 		mCameraOrientationEventListener = new CameraOrientationEventListener(this);
-		
 		mViews = new ArrayList<View>();
 		View view = LayoutInflater.from(this).inflate(R.layout.watermark_fragment, null);
 		ImageView iv = (ImageView) view.findViewById(R.id.iv_watermark);
@@ -227,7 +226,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		mCameraOrientationEventListener.disable();
 		isPause = true;
 		clearCusorFocus();
-		CameraManager.get().stopPreview(false);
+		CameraManager.get().stopPreview(true);
 		CameraManager.get().closeDriver();
 	}
 
@@ -367,7 +366,6 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 				}
 				switchCamera(false);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			break;

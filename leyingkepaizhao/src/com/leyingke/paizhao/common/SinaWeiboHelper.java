@@ -16,7 +16,7 @@ import android.text.TextUtils;
 
 import com.leyingke.paizhao.R;
 import com.leyingke.paizhao.interfaces.ISinaCallBack;
-import com.leyingke.paizhao.ui.SinaShareActivity;
+import com.leyingke.paizhao.ui.activity.SinaShareActivity;
 import com.leyingke.paizhao.utils.Logger;
 import com.leyingke.paizhao.utils.MyToast;
 import com.leyingke.paizhao.utils.StringUtils;

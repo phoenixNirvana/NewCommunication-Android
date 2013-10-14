@@ -141,7 +141,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
 		    isFirstInitlizeSize = false;
 	        requestLayout();
 	        mPreviewSize = CameraManager.get().getOptimalPreviewSize(height,width);
-	        Logger.debugPrint("CameraPreview", "  surfaceChanged width="+width+"  height="+height+"  "+mPreviewSize.width+"  "+mPreviewSize.height);
+	    //    Logger.debugPrint("CameraPreview", "  surfaceChanged width="+width+"  height="+height+"  "+mPreviewSize.width+"  "+mPreviewSize.height);
 	        CameraManager.get().setPreviewSize(mPreviewSize);
 	        CameraManager.get().startPreview(false);
 	}

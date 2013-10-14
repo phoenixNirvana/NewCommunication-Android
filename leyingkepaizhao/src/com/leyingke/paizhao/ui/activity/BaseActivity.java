@@ -1,4 +1,4 @@
-package com.leyingke.paizhao.ui;
+package com.leyingke.paizhao.ui.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -23,7 +23,7 @@ public class BaseActivity extends Activity {
     };
 	
 	/**
-	 * ÏÔÊ¾ÌáÊ¾¿ò
+	 * ï¿½ï¿½Ê¾ï¿½ï¿½Ê¾ï¿½ï¿½
 	 */
 	public void showProgressDialog() {
 		if ((!isFinishing()) && (this.progressDialog == null)) {
@@ -31,7 +31,7 @@ public class BaseActivity extends Activity {
 			this.progressDialog.setCancelable(false);
 		}
 		if(!isShowing()){
-			this.progressDialog.setMessage("ÇëÉÔºó...");
+			this.progressDialog.setMessage("ï¿½ï¿½ï¿½Ôºï¿½...");
 			this.progressDialog.show();
 		}
 		
@@ -45,7 +45,7 @@ public class BaseActivity extends Activity {
 	}
 	
 	/**
-	 * ¹Ø±ÕÌáÊ¾¿ò
+	 * ï¿½Ø±ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½
 	 */
 	public void closeProgressDialog() {
 		if (isShowing()){

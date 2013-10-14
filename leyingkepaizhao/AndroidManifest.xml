@@ -44,7 +44,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Black.NoTitleBar" >
         <activity
-            android:name="com.leyingke.paizhao.ui.CameraActivity"
+            android:name="com.leyingke.paizhao.ui.activity.CameraActivity"
             android:configChanges="orientation|keyboard"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
@@ -54,9 +54,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.leyingke.paizhao.ui.EffectActivity" >
+        <activity android:name="com.leyingke.paizhao.ui.activity.EffectActivity" >
         </activity>
-        <activity android:name=".ui.SinaShareActivity" >
+        <activity android:name=".activity.SinaShareActivity" >
         </activity>
     </application>
 

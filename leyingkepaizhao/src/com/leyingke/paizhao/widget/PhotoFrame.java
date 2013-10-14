@@ -153,10 +153,10 @@ public class PhotoFrame extends View{
 	    	  return ;
 	      }
 		}
-        System.out.println("setPhoto  "+mContentHeight);
+   //     System.out.println("setPhoto  "+mContentHeight);
         if(mDrawPhotoBitmap == null){
         	mDrawPhotoBitmap = new DrawBitmap();
-        	mDrawPhotoBitmap.mBitmap = produceBitmap(filePath);
+        	mDrawPhotoBitmap.mBitmap = produceBitmap(mFilePath);
         	mDrawPhotoBitmap.setScrRect();
         }
 		/*if(mDrawPhotoBitmap.mWidth >= mDrawPhotoBitmap.mHeight){

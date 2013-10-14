@@ -155,6 +155,7 @@ public final class CameraManager {
 		 synchronized (mannObj) {
 			 if (camera != null && previewing) {
 				 camera.stopPreview();
+				 previewing = false;
 			 }else{
 				 return;
 			 }
