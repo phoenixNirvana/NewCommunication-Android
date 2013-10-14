@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.leyingke.paizhao.camera;
+package com.leyingke.paizhao.interfaces;
 
 import com.leyingke.paizhao.utils.Logger;
 
@@ -23,14 +23,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-final class AutoFocusCallback implements Camera.AutoFocusCallback {
+public class AutoFocusCallback implements Camera.AutoFocusCallback {
 
   private static final String TAG = AutoFocusCallback.class.getSimpleName();
   private static final long AUTOFOCUS_INTERVAL_MS = 1500L;
   private Handler autoFocusHandler;
   private int autoFocusMessage;
 
-  void setHandler(Handler autoFocusHandler, int autoFocusMessage) {
+  public void setHandler(Handler autoFocusHandler, int autoFocusMessage) {
     this.autoFocusHandler = autoFocusHandler;
     this.autoFocusMessage = autoFocusMessage;
   }

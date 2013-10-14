@@ -1,4 +1,4 @@
-package com.leyingke.paizhao.camera;
+package com.leyingke.paizhao.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

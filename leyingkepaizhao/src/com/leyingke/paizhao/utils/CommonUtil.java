@@ -15,7 +15,7 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 
-import com.leyingke.paizhao.camera.CameraActivity;
+import com.leyingke.paizhao.ui.CameraActivity;
 
 public class CommonUtil {
 

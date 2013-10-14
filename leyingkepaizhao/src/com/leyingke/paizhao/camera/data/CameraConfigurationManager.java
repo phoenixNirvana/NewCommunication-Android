@@ -1,41 +1,17 @@
-/*
- * Copyright (C) 2010 ZXing authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.leyingke.paizhao.camera;
+package com.leyingke.paizhao.camera.data;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.leyingke.paizhao.utils.Logger;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.ImageFormat;
-import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.os.Build;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
 final class CameraConfigurationManager {
 
@@ -56,9 +32,6 @@ final class CameraConfigurationManager {
 		this.context = context;
 	}
 
-	/**
-	 * Reads, one time, values from the camera that are needed by the app.
-	 */
 	public void initCameraParameters(Camera camera) {
 		Camera.Parameters parameters = camera.getParameters();
 		numberOfCameras = Camera.getNumberOfCameras();
@@ -85,7 +58,7 @@ final class CameraConfigurationManager {
 	   return numberOfCameras;
    }
 
-	String getPreviewFormatString() {
+	public String getPreviewFormatString() {
 		return previewFormatString;
 	}
 
@@ -110,37 +83,22 @@ final class CameraConfigurationManager {
 	}
 
 	public void setFlash(Camera.Parameters parameters) {
-		// FIXME: This is a hack to turn the flash off on the Samsung Galaxy.
-		// And this is a hack-hack to work around a different value on the
-		// Behold II
-		// Restrict Behold II check to Cupcake, per Samsung's advice
-		// if (Build.MODEL.contains("Behold II") &&
-		// CameraManager.SDK_INT == Build.VERSION_CODES.CUPCAKE) {
-		if (Build.MODEL.contains("Behold II") && CameraManager.SDK_INT == 3) { // 3
-																				// =
-																				// Cupcake
+		
+		if (Build.MODEL.contains("Behold II") && CameraManager.SDK_INT == 3) { 
 			parameters.set("flash-value", 1);
 		} else {
 			parameters.set("flash-value", 2);
 		}
-		// This is the standard setting to turn the flash off that all devices
-		// should honor.
-	//	parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
 		parameters.set("flash-mode", "off");
 	}
 	
 	public void setFlash(Camera.Parameters parameters,String mode) {
 		
-		if (Build.MODEL.contains("Behold II") && CameraManager.SDK_INT == 3) { // 3
-																				// =
-																				// Cupcake
+		if (Build.MODEL.contains("Behold II") && CameraManager.SDK_INT == 3) {
 			parameters.set("flash-value", 1);
 		} else {
 			parameters.set("flash-value", 2);
 		}
-		// This is the standard setting to turn the flash off that all devices
-		// should honor.
-	//	parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
 		parameters.set("flash-mode", mode);
 	}
 

@@ -1,4 +1,4 @@
-package com.leyingke.paizhao.data;
+package com.leyingke.paizhao.camera.data;
 
 import java.util.Timer;
 

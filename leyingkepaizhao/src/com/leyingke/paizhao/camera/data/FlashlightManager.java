@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.leyingke.paizhao.camera;
+package com.leyingke.paizhao.camera.data;
 
 import android.os.IBinder;
 import android.util.Log;

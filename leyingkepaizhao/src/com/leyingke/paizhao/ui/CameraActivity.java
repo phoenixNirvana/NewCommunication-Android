@@ -1,4 +1,4 @@
-package com.leyingke.paizhao.camera;
+package com.leyingke.paizhao.ui;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +29,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.view.ViewTreeObserver;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -42,9 +40,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.leyingke.paizhao.R;
-import com.leyingke.paizhao.camera.CameraManager.OnPreviewListener;
-import com.leyingke.paizhao.data.AutoFocusManager;
-import com.leyingke.paizhao.ui.BaseActivity;
+import com.leyingke.paizhao.camera.data.CameraHandler;
+import com.leyingke.paizhao.camera.data.CameraManager;
+import com.leyingke.paizhao.camera.data.CameraManager.OnPreviewListener;
 import com.leyingke.paizhao.utils.BitmapUtil;
 import com.leyingke.paizhao.utils.CommonUtil;
 import com.leyingke.paizhao.utils.Logger;
@@ -130,23 +128,19 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 				updateBtnState(preview);
 			}
 		});
+		mHandler = new CameraHandler(this);
+		CameraManager.get().setHandler(mHandler);
+		
 		mCameraOrientationEventListener = new CameraOrientationEventListener(this);
 		
 		mViews = new ArrayList<View>();
 		View view = LayoutInflater.from(this).inflate(R.layout.watermark_fragment, null);
 		ImageView iv = (ImageView) view.findViewById(R.id.iv_watermark);
-		iv.setImageResource(R.drawable.guilai);
+		iv.setImageResource(R.drawable.guilai); 
 		mViews.add(view);
 		mAdapter = new MyAdapter();
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setCurrentItem(0);
-		
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				initFirstPageView();
-			}
-		});
 	}
 	
 	private void updateBtnState(boolean preview){
@@ -160,39 +154,18 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		}
 	}
 	
-	private void initFirstPageView(){
-		View view = mViews.get(0);
-	/*	final ImageView iv = (ImageView) view.findViewById(R.id.iv_watermark);
-		ViewTreeObserver vto = iv.getViewTreeObserver();   
-		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
-		    @Override   
-		    public void onGlobalLayout() { 
-		    	iv.getViewTreeObserver().removeGlobalOnLayoutListener(this);   
-		    	if(mLocation != null){
-		    		mLocation[0] = 0;
-		    		mLocation[1] = 0;
-		    	}
-		    	mLocation[0] = iv.getLeft();
-		    	mLocation[1] = iv.getTop();
-		    	mCurrentBitmap = ((BitmapDrawable)iv.getDrawable()).getBitmap();
-		    }   
-		});*/
-	}
-	
 	@Override
 	protected void onResume() {
 		super.onResume();
 		Logger.debugPrint("onResume");
 		mCameraOrientationEventListener.enable();
 		if(!isInitlized){
-			switchCamera(true);
+			initCamera();
 			isInitlized = true;
-			if(mCameraPreview != null){
-				mCameraPreview.updataViewSize();
-			}
-			if (mHandler == null) {
-				mHandler = new CameraHandler(this);
-				CameraManager.get().setHandler(mHandler);
+		}else{
+			if(isPause){
+				isPause = false;
+				switchCamera(true);
 			}
 		}
 	}
@@ -207,30 +180,18 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 			mCameraLayout.resetShapeFocus();
 	}
 	
-/*	private void initCamera() {
-		try {
-			Logger.debugPrint("initCamera");
-			CameraManager.get().openDriver();
-			new Thread(){
-				@Override
-				public void run() {
-					try {
-						CameraManager.get().openDriver();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+	private void initCamera(){
+		new Thread(){
+			@Override
+			public void run() {
+				try {
+					CameraManager.get().openDriver();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			}.start();
-		} catch (RuntimeException e) {
-			return;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (mHandler == null) {
-			mHandler = new CameraHandler(this);
-		}
-	}*/
+			}
+		}.start();
+	}
 	
 	private void switchCamera(final boolean isCallback) {
 		try {
@@ -257,12 +218,14 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		}
 	}
 	
+	private boolean isPause = false;
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		Logger.debugPrint("onPause");
 		mCameraOrientationEventListener.disable();
-		isInitlized = false;
+		isPause = true;
 		clearCusorFocus();
 		CameraManager.get().stopPreview(false);
 		CameraManager.get().closeDriver();
@@ -271,10 +234,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (mHandler != null) {
-			mHandler.quitSynchronously();
-			mHandler = null;
-		}
+		isInitlized = false;
 	}
 	
 	public void startFocusAni(){
@@ -346,13 +306,11 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 			mContainer2.setVisibility(View.GONE);
 			break;
 		case R.id.btn_take:  
-		//	AutoFocusManager.getAutoFocusManager().cancel();
 			if(mCameraLayout != null){
 				mCameraLayout.resetShapeFocus(Color.GREEN);
 			}
 			Logger.debugPrint("btn_take");
 			CameraManager.get().takePicture();
-		//	CameraManager.get().requestAutoFocus(mHandler, CameraHandler.AUTOFOCUS);
 			break;
 		case R.id.btn_choice:  
 			openPhoto();
@@ -375,9 +333,9 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 					mLocation[0] = (int) (mOriginalBitmap.getWidth() * xRatio);
 					mLocation[1] = (int) (mOriginalBitmap.getHeight() * yRatio);
 					Logger.debugPrint("onPictureTaken"+" locx="+mLocation[0]+" locy="+mLocation[1]);
-					 
 					Logger.debugPrint("onPictureTaken"+" save mOriginalBitmap width="+mOriginalBitmap.getWidth()+" height="+mOriginalBitmap.getHeight());
 					Logger.debugPrint("onPictureTaken"+" save mCurrentBitmap width="+mCurrentBitmap.getWidth()+" height="+mCurrentBitmap.getHeight());
+					
 					Bitmap newBitmap = BitmapUtil.createBitmap(mOriginalBitmap, mCurrentBitmap,mLocation[0],mLocation[1], scale);
 					Logger.debugPrint("onPictureTaken"+" save width="+newBitmap.getWidth()+" height="+newBitmap.getHeight());
 					ContentResolver resolver = getContentResolver();
@@ -385,7 +343,6 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 					String filePath = CommonUtil.writeFile(fileName + "", CommonUtil.Bitmap2Bytes(newBitmap));
 					int fileLength = (int)(new File(filePath).length());
 					int what = CameraHandler.SAVE_BITMAP_SUCCESS;
-				
 					Uri uri = CommonUtil.insertBitmap(getApplicationContext(), resolver, fileName, filePath, fileLength, mOrientation);
 					if(uri == null){
 						filePath = null;

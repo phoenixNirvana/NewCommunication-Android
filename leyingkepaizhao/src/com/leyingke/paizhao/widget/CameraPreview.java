@@ -1,6 +1,6 @@
 package com.leyingke.paizhao.widget;
 
-import com.leyingke.paizhao.camera.CameraManager;
+import com.leyingke.paizhao.camera.data.CameraManager;
 import com.leyingke.paizhao.utils.Logger;
 
 import android.content.Context;
