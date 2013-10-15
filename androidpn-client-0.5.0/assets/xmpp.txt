@@ -1,0 +1,7 @@
+1.PacketWriter 负责发送信息到服务器
+
+发送消息 有个队列 每次从队列中取数据
+
+2.PacketReader 负责读取服务器传过来的数据
+
+3.ObservableWriter 负责写数据到服务器
