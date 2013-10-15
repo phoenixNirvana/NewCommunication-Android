@@ -30,7 +30,7 @@ import android.widget.EditText;
 import com.lechat.R;
 import com.lechat.client.MyChatManager;
 import com.lechat.client.ServiceManager;
-import com.lechat.client.XmppManager.IChatMessageListener;
+import com.lechat.interfaces.IChatMessageListener;
 
 /**
  * This is an androidpn client demo application.

@@ -112,7 +112,7 @@ public class NotificationService extends Service {
 //        }
         Log.d(LOGTAG, "deviceId=" + deviceId);
 
-        xmppManager = XmppManager.getInstance(this);
+//        xmppManager = XmppManager.getInstance(this);
 
 //        taskSubmitter.submit(new Runnable() {
 //            public void run() {
@@ -230,14 +230,14 @@ public class NotificationService extends Service {
         registerConnectivityReceiver();
         // Intent intent = getIntent();
         // startService(intent);
-        xmppManager.connect();
+//        xmppManager.connect();
     }
 
     private void stop() {
         Log.d(LOGTAG, "stop()...");
         unregisterNotificationReceiver();
         unregisterConnectivityReceiver();
-        xmppManager.disconnect();
+//        xmppManager.disconnect();
 //        executorService.shutdown();
     }
 

@@ -6,9 +6,9 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
-import com.lechat.client.XmppManager.IChatMessageListener;
-
 import android.content.Context;
+
+import com.lechat.interfaces.IChatMessageListener;
 
 public class MyChatManager {
 	
