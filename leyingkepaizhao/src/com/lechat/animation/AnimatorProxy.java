@@ -1,4 +1,4 @@
-package com.lechat.animation.flakes;
+package com.lechat.animation;
 
 import android.graphics.Camera;
 import android.graphics.Matrix;

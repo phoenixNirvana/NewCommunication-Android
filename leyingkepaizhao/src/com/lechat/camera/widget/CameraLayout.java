@@ -2,11 +2,11 @@ package com.lechat.camera.widget;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.lechat.animation.flakes.Animator;
-import com.lechat.animation.flakes.ObjectAnimator;
-import com.lechat.animation.flakes.ValueAnimator;
-import com.lechat.animation.flakes.Animator.AnimatorListener;
-import com.lechat.animation.flakes.ValueAnimator.AnimatorUpdateListener;
+import com.lechat.animation.Animator;
+import com.lechat.animation.ObjectAnimator;
+import com.lechat.animation.ValueAnimator;
+import com.lechat.animation.Animator.AnimatorListener;
+import com.lechat.animation.ValueAnimator.AnimatorUpdateListener;
 import com.lechat.utils.CommonUtil;
 import com.lechat.utils.Logger;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.lechat.animation.flakes;
+package com.lechat.animation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

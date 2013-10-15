@@ -1,9 +1,9 @@
 package com.lechat.camera.widget;
 
 import com.lechat.R;
-import com.lechat.animation.flakes.ObjectAnimator;
-import com.lechat.animation.flakes.ValueAnimator;
-import com.lechat.animation.flakes.ValueAnimator.AnimatorUpdateListener;
+import com.lechat.animation.ObjectAnimator;
+import com.lechat.animation.ValueAnimator;
+import com.lechat.animation.ValueAnimator.AnimatorUpdateListener;
 import com.lechat.camera.utils.BitmapUtil;
 
 import android.content.Context;

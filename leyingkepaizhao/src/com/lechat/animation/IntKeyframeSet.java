@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.lechat.animation.flakes;
+package com.lechat.animation;
 
 import java.util.ArrayList;
 
 import android.view.animation.Interpolator;
 
-import com.lechat.animation.flakes.Keyframe.IntKeyframe;
+import com.lechat.animation.Keyframe.IntKeyframe;
 
 /**
  * This class holds a collection of IntKeyframe objects and is called by ValueAnimator to calculate

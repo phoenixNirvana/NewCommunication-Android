@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.lechat.animation.flakes;
+package com.lechat.animation;
 
 import java.util.ArrayList;
 
 import android.view.animation.Interpolator;
 
-import com.lechat.animation.flakes.Keyframe.FloatKeyframe;
+import com.lechat.animation.Keyframe.FloatKeyframe;
 
 /**
  * This class holds a collection of FloatKeyframe objects and is called by ValueAnimator to calculate

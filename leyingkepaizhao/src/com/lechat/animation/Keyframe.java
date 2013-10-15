@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.lechat.animation.flakes;
+package com.lechat.animation;
 
 import android.view.animation.Interpolator;
 
