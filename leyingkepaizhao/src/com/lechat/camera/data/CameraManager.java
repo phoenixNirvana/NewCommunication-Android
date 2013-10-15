@@ -133,6 +133,7 @@ public final class CameraManager {
 	 * Asks the camera hardware to begin drawing preview frames to the screen.
 	 */
 	public void startPreview(boolean isChangeBtnState) {
+		requestAutoFocus(mHandler);
         synchronized (mannObj) {
         	if (camera != null && !previewing) {
         		camera.startPreview();
@@ -141,7 +142,6 @@ public final class CameraManager {
         		return;
         	}
 		}
-        requestAutoFocus(mHandler);
         if (onPreviewListener != null && isChangeBtnState) {
         	onPreviewListener.onPreview(previewing);
         }
