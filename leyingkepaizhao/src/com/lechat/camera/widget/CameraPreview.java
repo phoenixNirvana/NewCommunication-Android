@@ -78,7 +78,7 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
 							if(retry > 4){
 								break;
 							};
-							sleep(1000);
+							sleep(300);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -135,20 +135,18 @@ public class CameraPreview extends ViewGroup implements SurfaceHolder.Callback{
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
 		    Logger.debugPrint("CameraPreview", "  surfaceChanged width="+width+"  height="+height);
-		    CameraManager.get().stopPreview(false);
 		    mWidth = width;
 			mHeight = height;
-		    isFirstInitlizeSize = false;
-	        requestLayout();
-	        mPreviewSize = CameraManager.get().getOptimalPreviewSize(height,width);
-	    //    Logger.debugPrint("CameraPreview", "  surfaceChanged width="+width+"  height="+height+"  "+mPreviewSize.width+"  "+mPreviewSize.height);
-	        CameraManager.get().setPreviewSize(mPreviewSize);
-	        CameraManager.get().startPreview(false);
+		    if(CameraManager.get().getCamera() != null){
+		    	CameraManager.get().stopPreview(false);
+		    }
+		    updataViewSize();
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		CameraManager.get().stopPreview(true);
+		CameraManager.get().stopPreview(false);
+		CameraManager.get().closeDriver();
 		isFirstInitlizeSize = true;
 	}
 	

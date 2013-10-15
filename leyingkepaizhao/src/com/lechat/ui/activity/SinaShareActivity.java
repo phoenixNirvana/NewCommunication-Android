@@ -18,9 +18,7 @@ import com.weibo.sdk.android.net.RequestListener;
 public class SinaShareActivity extends BaseActivity implements OnClickListener, RequestListener{
 
 	private EditText mEtShare;
-	
 	private Button mBtnShare;
-	
 	private String mFilePath;
 	
 	@Override

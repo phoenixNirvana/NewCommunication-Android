@@ -164,7 +164,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		}else{
 			if(isPause){
 				isPause = false;
-				switchCamera(true);
+				switchCamera(false);
 			}
 		}
 	}
