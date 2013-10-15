@@ -94,7 +94,7 @@ public class DemoAppActivity extends Activity {
 
         // Start the service
         ServiceManager serviceManager = new ServiceManager(this);
-        serviceManager.setNotificationIcon(R.drawable.notification);
+        serviceManager.setNotificationIcon(R.drawable.back_nor);
         serviceManager.startService();
         
     }

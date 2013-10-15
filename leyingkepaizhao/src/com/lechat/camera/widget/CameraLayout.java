@@ -1,7 +1,5 @@
 package com.lechat.camera.widget;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.lechat.animation.Animator;
 import com.lechat.animation.ObjectAnimator;
 import com.lechat.animation.ValueAnimator;
@@ -198,7 +196,6 @@ public class CameraLayout extends RelativeLayout {
 		yObj.setInterpolator(di);
 		yObj.start();
 	}
-	
     
 	
 	class FocusShape{
