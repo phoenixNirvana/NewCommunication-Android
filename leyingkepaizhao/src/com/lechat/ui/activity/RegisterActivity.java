@@ -1,12 +1,6 @@
 package com.lechat.ui.activity;
 
-import com.lechat.R;
-import com.lechat.client.XmppManager;
-import com.lechat.interfaces.ILoginListener;
-import com.lechat.interfaces.IRegisterListener;
-import com.lechat.utils.Logger;
-import com.lechat.utils.MyToast;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +8,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.lechat.R;
+import com.lechat.client.MyChatManager;
+import com.lechat.client.XmppManager;
+import com.lechat.interfaces.ILoginListener;
+import com.lechat.interfaces.IRegisterListener;
+import com.lechat.utils.Logger;
+import com.lechat.utils.MyToast;
+import com.lechat.utils.StringUtils;
 
 
 
@@ -56,7 +59,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener{
 		mBtnLogin.setOnClickListener(this);
 		mBtnRegister.setOnClickListener(this);
 		
-		mXmppManager = XmppManager.getInstance(this);
+		mXmppManager = MyChatManager.getInstance(this).getXmppManager();
 		
 		mXmppManager.setRegisterListener(new IRegisterListener() {
 			
@@ -108,7 +111,28 @@ public class RegisterActivity extends BaseActivity implements OnClickListener{
 			
 			String confirm = mEtConfirm.getText().toString();
 			
-			mXmppManager.submitRegisterTask(account, password);
+			if(StringUtils.isEmpty(account)){
+				MyToast.showToast(this, "请输入用户名");
+				return;
+			}
+			
+			if(StringUtils.isEmpty(password)){
+				MyToast.showToast(this, "请输入密码");
+				return;
+			}
+			
+			if(StringUtils.isEmpty(confirm)){
+				MyToast.showToast(this, "请确认密码是否相同！");
+				return;
+			}
+			
+			
+			if(password.equals(confirm)){
+				mXmppManager.onRegister(account, password);
+			}else {
+				MyToast.showToast(this, "请确认密码是否相同！");
+			}
+			
 			break;
 
 		}
@@ -131,6 +155,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener{
 				break;
 			case XmppManager.LOGIN_SUCCESS:
 				MyToast.showToast(RegisterActivity.this, "登录成功，跳转下一界面");
+				startActivity(new Intent(RegisterActivity.this, UserListActivity.class));
 				break;
 			case XmppManager.LOGIN_FAIL:
 				MyToast.showToast(RegisterActivity.this, "登录失败");

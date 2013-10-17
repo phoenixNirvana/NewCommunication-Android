@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.lechat.R;
+import com.lechat.client.MyChatManager;
 import com.lechat.client.ServiceManager;
 import com.lechat.client.XmppManager;
 import com.lechat.interfaces.IConnectListener;
@@ -48,6 +49,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener{
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		
+		mXmppManager.disconnect();
 	}
 
 	private void init(){
@@ -62,7 +65,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener{
 		mBtnLogin.setOnClickListener(this);
 		mBtnRegister.setOnClickListener(this);
 		
-		mXmppManager = XmppManager.getInstance(this);
+		mXmppManager = MyChatManager.getInstance(this).getXmppManager();
 		
 		mXmppManager.setConnectListener(new IConnectListener() {
 			
@@ -129,6 +132,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener{
 			
 		case R.id.btn_register:
 			
+			startActivity(new Intent(this, RegisterActivity.class));
+			
 			break;
 
 		}
@@ -156,6 +161,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener{
 				break;
 			case XmppManager.LOGIN_SUCCESS:
 				MyToast.showToast(LoginActivity.this, "登录成功，跳转下一界面");
+				
+				startActivity(new Intent(LoginActivity.this, UserListActivity.class));
+				
 				break;
 			case XmppManager.LOGIN_FAIL:
 				MyToast.showToast(LoginActivity.this, "登录失败");

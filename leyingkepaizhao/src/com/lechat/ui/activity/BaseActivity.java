@@ -29,13 +29,13 @@ public class BaseActivity extends Activity {
 		if ((!isFinishing()) && (this.progressDialog == null)) {
 			this.progressDialog = new ProgressDialog(this);
 			this.progressDialog.setCancelable(false);
+			this.progressDialog.setMessage("请稍后...");
+			this.progressDialog.setOnKeyListener(onKeyListener);
 		}
 		if(!isShowing()){
-			this.progressDialog.setMessage("���Ժ�...");
 			this.progressDialog.show();
 		}
 		
-		progressDialog.setOnKeyListener(onKeyListener);
 	}
 	
 	private ProgressDialog progressDialog;

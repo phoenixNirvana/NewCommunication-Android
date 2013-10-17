@@ -3,6 +3,7 @@ package com.lechat.dao.proxy;
 import java.util.List;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.androidpn.bean.ChatBean;
@@ -29,40 +30,44 @@ public class IChatDAOProxy implements IEntityDAO<ChatBean>{
 
 	@Override
 	public boolean doCreate(ChatBean chat) throws Exception {
-		// TODO Auto-generated method stub
 		
 		return mChatDAOImpl.doCreate(chat);
 	}
 
 	@Override
 	public boolean doUpdate(ChatBean chat) throws Exception {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean doDelete(int chatId) throws Exception {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public ChatBean findById(int chatId) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<ChatBean> findAll(int currentPage, int lineSize, String keyWord)
 			throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int getAllCount(String keyWord) throws Exception {
-		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public Cursor findAll() {
+		return mChatDAOImpl.findAll();
+	}
+
+	@Override
+	public List<ChatBean> findAll2() {
+		return mChatDAOImpl.findAll2();
 	}
 
 }

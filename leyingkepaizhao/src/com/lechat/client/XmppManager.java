@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +37,9 @@ import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
@@ -45,6 +49,7 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Registration;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.OfflineMessageManager;
@@ -54,11 +59,6 @@ import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
 
-import com.lechat.interfaces.IChatMessageListener;
-import com.lechat.interfaces.IConnectListener;
-import com.lechat.interfaces.ILoginListener;
-import com.lechat.interfaces.IRegisterListener;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -66,12 +66,19 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 
+import com.androidpn.bean.UserInfo;
+import com.lechat.interfaces.IChatDao;
+import com.lechat.interfaces.IChatMessageListener;
+import com.lechat.interfaces.IConnectListener;
+import com.lechat.interfaces.ILoginListener;
+import com.lechat.interfaces.IRegisterListener;
+
 /**
  * This class is to manage the XMPP connection between client and server.
  * 
  * @author Sehwan Noh (devnoh@gmail.com)
  */
-public class XmppManager {
+public class XmppManager implements IChatDao{
 
     private static final String LOGTAG = LogUtil.makeLogTag(XmppManager.class);
 
@@ -110,8 +117,6 @@ public class XmppManager {
 
     private Thread reconnection;
     
-    private static XmppManager xmppManager;
-    
     private ExecutorService executorService;
     
     private Map<String, IChatMessageListener> mChatlisteners;
@@ -143,18 +148,6 @@ public class XmppManager {
 		this.mLoginListener = mLoginListener;
 	}
 
-    
-    public synchronized static XmppManager getInstance(Context context){
-    	
-		synchronized (XmppManager.class) {
-			if (xmppManager == null) {
-				xmppManager = new XmppManager(context);
-			}
-		}
-    	
-    	return xmppManager;
-    }
-
     static{   
         try{  
            Class.forName("org.jivesoftware.smack.ReconnectionManager");  
@@ -163,7 +156,7 @@ public class XmppManager {
         }  
     }  
 
-    private XmppManager(Context context) {
+    public XmppManager(Context context) {
         this.context = context;
         
         taskSubmitter = new TaskSubmitter();
@@ -212,15 +205,16 @@ public class XmppManager {
         return context;
     }
 
+    /**
+     * 已注册用户直接登录
+     * 
+     * @param account
+     * @param password
+     */
     public void connect(String account, String password) {
         Log.d(LOGTAG, "connect()...");
+        submitConnectTask();
         submitLoginTask(account, password);
-    }
-
-    public void disconnect() {
-        Log.d(LOGTAG, "disconnect()...");
-        terminatePersistentConnection();
-        executorService.shutdown();
     }
 
     public void terminatePersistentConnection() {
@@ -236,7 +230,6 @@ public class XmppManager {
                             xmppManager.getNotificationPacketListener());
                     xmppManager.getConnection().disconnect();
                 }
-                xmppManager.runTask();
             }
 
         };
@@ -335,26 +328,31 @@ public class XmppManager {
                 && connection.isAuthenticated();
     }
 
-    private boolean isRegistered() {
-        return sharedPrefs.contains(Constants.XMPP_USERNAME)
-                && sharedPrefs.contains(Constants.XMPP_PASSWORD);
+    private boolean isRegistered(String account) {
+    	boolean flag = false;
+    	if(sharedPrefs.contains(Constants.XMPP_USERNAME)
+                && sharedPrefs.contains(Constants.XMPP_PASSWORD)){
+    		String str = sharedPrefs.getString(Constants.XMPP_USERNAME, null);
+    		if(str.equals(account)){
+    			flag = true;
+    		}
+    	}
+        return flag;
     }
 
     private void submitConnectTask() {
         Log.d(LOGTAG, "submitConnectTask()...");
         addTask(new ConnectTask());
+        runTask();
     }
 
-    public void submitRegisterTask(String account, String password) {
+    private void submitRegisterTask(String account, String password) {
         Log.d(LOGTAG, "submitRegisterTask()...");
-        submitConnectTask();
         addTask(new RegisterTask(account, password));
-        runTask();
     }
 
     private void submitLoginTask(String account, String password) {
         Log.d(LOGTAG, "submitLoginTask()...");
-        submitConnectTask();
         addTask(new LoginTask(account, password));
     }
 
@@ -399,7 +397,7 @@ public class XmppManager {
             if (!xmppManager.isConnected()) {
                 // Create the configuration for this new connection
                 ConnectionConfiguration connConfig = new ConnectionConfiguration(
-                        "10.58.108.55", 5222);
+                        "10.58.108.201", 5222);
                 
                 // connConfig.setSecurityMode(SecurityMode.disabled);
                 connConfig.setSecurityMode(SecurityMode.required);
@@ -529,7 +527,7 @@ public class XmppManager {
 
         public void run() {
             Log.i(LOGTAG, "RegisterTask.run()...");
-            if (!xmppManager.isRegistered()) {
+            if (!xmppManager.isRegistered(account)) {
                 Registration registration = new Registration();
                 PacketFilter packetFilter = new AndFilter(new PacketIDFilter(registration.getPacketID()), new PacketTypeFilter(IQ.class));
                 PacketListener packetListener = new PacketListener() {
@@ -553,8 +551,7 @@ public class XmppManager {
                                 Log.d(LOGTAG, "password=" + password);
                                 Editor editor = sharedPrefs.edit();
                                 editor.putString(Constants.XMPP_USERNAME, account);
-                                editor.putString(Constants.XMPP_PASSWORD,
-                                        password);
+                                editor.putString(Constants.XMPP_PASSWORD, password);
                                 editor.commit();
                                 Log.i(LOGTAG, "Account registered successfully");
                                 xmppManager.runTask();
@@ -706,6 +703,35 @@ public class XmppManager {
         
     }
     
+    public List<UserInfo> getUsers(){
+    	
+    	Roster roster = getConnection().getRoster();
+    	Collection<RosterGroup> groups = roster.getGroups();
+    	Collection<RosterEntry> entries = roster.getEntries();
+    	
+    	List<UserInfo> users = null;
+    	
+    	if(entries != null && !entries.isEmpty()){
+    		users = new ArrayList<UserInfo>();
+    		for (RosterEntry rosterEntry : entries) {
+    			
+    			Presence presence = roster.getPresence(rosterEntry.getUser()); 
+    			
+    			UserInfo user = new UserInfo();
+    			user.setName(rosterEntry.getName());
+    			user.setUser(rosterEntry.getUser());
+    			user.setStatus(presence.getStatus());
+    			user.setFrom(presence.getFrom());
+    			
+    			users.add(user);
+    		}
+    	}
+    	
+    	
+    	return users;
+    	
+    }
+    
     /**
      * Class for summiting a new runnable task.
      */
@@ -746,5 +772,30 @@ public class XmppManager {
         }
 
     }
+
+	@Override
+	public void onConnect() {
+		submitConnectTask();
+	}
+
+	@Override
+	public void onLogin(String account, String password) {
+		submitConnectTask();
+		submitLoginTask(account, password);
+	}
+
+	@Override
+	public void onRegister(String account, String password) {
+		submitConnectTask();
+		submitRegisterTask(account, password);
+	}
+
+	@Override
+	public void disconnect() {
+		Log.d(LOGTAG, "disconnect()...");
+        terminatePersistentConnection();
+        executorService.shutdown();
+	}
+
     
 }
