@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/take_bg" 
+    >
+     <RelativeLayout
+        android:id="@+id/rl_take"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical" >
+        <com.lechat.camera.widget.RotateImageView
+            android:id="@+id/btn_choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/btn_photo_sel"/>
+        <com.lechat.camera.widget.RotateImageView
+            android:id="@+id/btn_take"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/btn_take_pic_sel" />
+        <com.lechat.camera.widget.RotateImageView
+            android:id="@+id/btn_watermark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/btn_take_pic_sel"/>
+    </RelativeLayout>
+    <RelativeLayout
+            android:id="@+id/rl_save"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:visibility="gone" >
+             <com.lechat.camera.widget.RotateImageView
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/btn_cancel_sel"
+                android:textSize="20sp" />
+            <com.lechat.camera.widget.RotateImageView
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/btn_save_sel" />
+           
+        </RelativeLayout>
+</FrameLayout>
