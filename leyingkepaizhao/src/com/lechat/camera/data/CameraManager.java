@@ -159,7 +159,6 @@ public final class CameraManager {
 				 return;
 			 }
 		 }
-		 previewing = false;
 		 if (onPreviewListener != null && isChangeBtnState) {
 			 onPreviewListener.onPreview(previewing);
 		 }

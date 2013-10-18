@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/layout_main"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -25,11 +26,11 @@
             android:layout_height="0dp"
             android:visibility="gone" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vp_effect"
+        <com.lechat.camera.widget.WaterMarkGrallery
+            android:id="@+id/gl_effect"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </android.support.v4.view.ViewPager>
+        </com.lechat.camera.widget.WaterMarkGrallery>
         
         <Button
             android:id="@+id/btn_rotate"
@@ -135,7 +136,6 @@
                 android:background="@drawable/single_capabilitie_bg"
                 android:gravity="center"
                 android:visibility="visible" >
-
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -144,56 +144,10 @@
         </FrameLayout>
     </RelativeLayout>
 
-    <FrameLayout
+    <com.lechat.camera.widget.BottomView
+        android:id="@+id/view_bottomview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/take_bg" >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" >
-
-            <Button
-                android:id="@+id/btn_take"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@drawable/btn_take_pic_sel"
-                android:textSize="20sp" />
-
-            <Button
-                android:id="@+id/btn_choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:background="@drawable/btn_photo_sel"
-                android:textSize="20sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone" >
-
-            <Button
-                android:id="@+id/btn_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@drawable/btn_save_sel" />
-
-            <Button
-                android:id="@+id/btn_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:background="@drawable/btn_cancel_sel"
-                android:textSize="20sp" />
-        </RelativeLayout>
-    </FrameLayout>
+    />
 
 </LinearLayout>

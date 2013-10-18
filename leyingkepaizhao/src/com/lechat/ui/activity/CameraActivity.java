@@ -22,11 +22,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
@@ -34,42 +30,53 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.lechat.R;
+import com.lechat.adapter.WaterMarkAdapter;
 import com.lechat.camera.data.CameraHandler;
 import com.lechat.camera.data.CameraManager;
 import com.lechat.camera.data.CameraManager.OnPreviewListener;
+import com.lechat.camera.data.SlidBarBuildHelper;
+import com.lechat.camera.data.SlidBarItem;
+import com.lechat.camera.data.WaterMarkBuildHelp;
+import com.lechat.camera.data.WaterMarkHelper;
+import com.lechat.camera.data.WaterMarkPosition;
 import com.lechat.camera.utils.BitmapUtil;
+import com.lechat.camera.widget.BottomView;
 import com.lechat.camera.widget.CameraLayout;
 import com.lechat.camera.widget.CameraPreview;
+import com.lechat.camera.widget.WaterMarkGrallery;
 import com.lechat.utils.CommonUtil;
 import com.lechat.utils.Logger;
 
 public class CameraActivity extends BaseActivity implements OnClickListener,PictureCallback
-														,OnPageChangeListener{
+														,OnItemSelectedListener{
 	private static final int PHOTO_ALBUM = 1;
 	private int mCurrentPosition = 2; 
 	private boolean isInitlized = false;
-	private List<View> mViews;
-	private MyAdapter mAdapter;
-	private Button mBtnRotate;
-	private Button btnChoicePic;
-	private Button btnTaskPic, mBtnSave, mBtnCancel;
+	private int mOrientation;
+	private WaterMarkAdapter mWaterMarkAdapter;
 	private CameraHandler mHandler;
 	private ImageView mShowPic;
 	private ImageView mBtnReplace;
+	private BottomView mBottomView;
 	private LinearLayout mContainer;
 	private LinearLayout mContainer2;
 	private LinearLayout mFlashOff, mFlashAuto, mFlashOpen, mFlashLight;
-	private RelativeLayout mRlTakePicture, mRlSave;
 	private CameraLayout mCameraLayout;
-	private ViewPager mViewPager;
+	private WaterMarkGrallery mWaterMarkGrallery;
+	private WaterMarkBuildHelp mWaterMarkBuildHelp;
 	private CameraPreview mCameraPreview;
+	private SlidBarBuildHelper mSlidBarBuildHelper;
 	private CameraOrientationEventListener mCameraOrientationEventListener;
+	private LinearLayout mLayoutMan;
+	private WaterMarkHelper mWaterMarkHelper;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,19 +101,12 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		
 		mShowPic = (ImageView) findViewById(R.id.iv_pic);
 		
-		btnTaskPic = (Button) findViewById(R.id.btn_take);
-		btnChoicePic = (Button) findViewById(R.id.btn_choice);
-		mBtnSave = (Button) findViewById(R.id.btn_save);
-		mBtnCancel = (Button) findViewById(R.id.btn_cancel);
-		mBtnRotate = (Button) findViewById(R.id.btn_rotate);
-		mViewPager = (ViewPager) findViewById(R.id.vp_effect);
+		mBottomView = (BottomView) findViewById(R.id.view_bottomview);
 		mCameraLayout = (CameraLayout) findViewById(R.id.cl_cameralayout);
 		mCameraPreview = (CameraPreview) findViewById(R.id.view_camerapreview);
-		mViewPager.setOnPageChangeListener(this);
-		mLocation = new int[2];
 		
-		mRlTakePicture = (RelativeLayout) btnTaskPic.getParent();
-		mRlSave = (RelativeLayout) mBtnSave.getParent();
+		mWaterMarkGrallery = (WaterMarkGrallery) findViewById(R.id.gl_effect);
+		mWaterMarkGrallery.setOnItemSelectedListener(this);
 		
 		mFlashOff.setOnClickListener(this);
 		mFlashAuto.setOnClickListener(this);
@@ -114,43 +114,40 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		mFlashLight.setOnClickListener(this);
 		mContainer2.setOnClickListener(this);
 		
-		btnTaskPic.setOnClickListener(this);
-		btnChoicePic.setOnClickListener(this);
-		mBtnSave.setOnClickListener(this);
-		mBtnCancel.setOnClickListener(this);
-		mBtnRotate.setOnClickListener(this);
+		mBottomView.setViewListener(this);
 		
 		CameraManager.init(getApplication());
 		CameraManager.get().setPictureCallback(this);
 		CameraManager.get().setOnPreviewListener(new OnPreviewListener() {
 			@Override
 			public void onPreview(boolean preview) {
-				updateBtnState(preview);
 			}
 		});
 		mHandler = new CameraHandler(this);
 		CameraManager.get().setHandler(mHandler);
 		
 		mCameraOrientationEventListener = new CameraOrientationEventListener(this);
-		mViews = new ArrayList<View>();
-		View view = LayoutInflater.from(this).inflate(R.layout.fr_watermark, null);
-		ImageView iv = (ImageView) view.findViewById(R.id.iv_watermark);
-		iv.setImageResource(R.drawable.guilai); 
-		mViews.add(view);
-		mAdapter = new MyAdapter();
-		mViewPager.setAdapter(mAdapter);
-		mViewPager.setCurrentItem(0);
+		
+		mWaterMarkBuildHelp = new WaterMarkBuildHelp(this);
+		mWaterMarkAdapter = new WaterMarkAdapter(this, mWaterMarkBuildHelp.getWaterMarkView());
+		mWaterMarkGrallery.setAdapter(mWaterMarkAdapter);
+		mWaterMarkGrallery.setSelection(0);
+		mSlidBarBuildHelper = new SlidBarBuildHelper();
+		
+		List<SlidBarItem> items = new ArrayList<SlidBarItem>();
+		items.add(new SlidBarItem("水印一",R.drawable.expression));
+		items.add(new SlidBarItem("水印二",R.drawable.expression));
+		items.add(new SlidBarItem("水印三",R.drawable.expression));
+		items.add(new SlidBarItem("水印四",R.drawable.expression));
+		items.add(new SlidBarItem("水印五",R.drawable.expression));
+		mLayoutMan = (LinearLayout) findViewById(R.id.layout_main);
+		mSlidBarBuildHelper.setSlidBarData(items);
+		mSlidBarBuildHelper.setContext(this);
+		mWaterMarkHelper = new WaterMarkHelper();
 	}
 	
 	private void updateBtnState(boolean preview){
-		
-		if(preview){
-			mRlTakePicture.setVisibility(View.VISIBLE);
-			mRlSave.setVisibility(View.GONE);
-		}else{
-			mRlTakePicture.setVisibility(View.GONE);
-			mRlSave.setVisibility(View.VISIBLE);
-		}
+		mBottomView.changeLayout(preview);
 	}
 	
 	@Override
@@ -223,6 +220,8 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 	protected void onPause() {
 		super.onPause();
 		Logger.debugPrint("onPause");
+		if(mSlidBarBuildHelper != null)
+		    mSlidBarBuildHelper.closeSlidBar();
 		mCameraOrientationEventListener.disable();
 		isPause = true;
 		clearCusorFocus();
@@ -245,6 +244,10 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+		if(mBottomView != null && mBottomView.isSaveState()){
+			continuePic();
+			return ;
+		}
 		finish();
 	}
 
@@ -315,48 +318,15 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 			openPhoto();
 			break;
 		case R.id.btn_cancel:  
-			resetCusorFocus();
-			CameraManager.get().startPreview(true);
-			mShowPic.setVisibility(View.GONE);
+			continuePic();
 			break;
 		case R.id.btn_save:     
 			showProgressDialog();
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					generateWatermarkData(0);
-					 float xRatio = (float)mLocation[0] / mCameraPreview.getmWidth();
-					 float yRatio = (float)mLocation[1] / mCameraPreview.getmHeight();
-					 float scale = (float)mCurrentBitmap.getWidth() / mCameraPreview.getmWidth();
-					 
-					mLocation[0] = (int) (mOriginalBitmap.getWidth() * xRatio);
-					mLocation[1] = (int) (mOriginalBitmap.getHeight() * yRatio);
-					Logger.debugPrint("onPictureTaken"+" locx="+mLocation[0]+" locy="+mLocation[1]);
-					Logger.debugPrint("onPictureTaken"+" save mOriginalBitmap width="+mOriginalBitmap.getWidth()+" height="+mOriginalBitmap.getHeight());
-					Logger.debugPrint("onPictureTaken"+" save mCurrentBitmap width="+mCurrentBitmap.getWidth()+" height="+mCurrentBitmap.getHeight());
-					
-					Bitmap newBitmap = BitmapUtil.createBitmap(mOriginalBitmap, mCurrentBitmap,mLocation[0],mLocation[1], scale);
-					Logger.debugPrint("onPictureTaken"+" save width="+newBitmap.getWidth()+" height="+newBitmap.getHeight());
-					ContentResolver resolver = getContentResolver();
-					String fileName = System.currentTimeMillis() + "";
-					String filePath = CommonUtil.writeFile(fileName + "", CommonUtil.Bitmap2Bytes(newBitmap));
-					int fileLength = (int)(new File(filePath).length());
-					int what = CameraHandler.SAVE_BITMAP_SUCCESS;
-					Uri uri = CommonUtil.insertBitmap(getApplicationContext(), resolver, fileName, filePath, fileLength, mOrientation);
-					if(uri == null){
-						filePath = null;
-						what = CameraHandler.SAVE_BITMAP_FAIL;
-					}else{
-						Message msg = Message.obtain();
-						Bundle bundle = new Bundle();
-						bundle.putString("file_path", filePath);
-						bundle.putString("file_name", fileName);
-						msg.setData(bundle);
-						msg.what = what;
-						mHandler.sendMessage(msg);
-					}
-				}
-			}).start();
+			savePic();
+			break;
+		case R.id.btn_watermark:
+			if(mSlidBarBuildHelper != null)
+			    mSlidBarBuildHelper.showSlidBar(mBottomView,mLayoutMan);
 			break;
 		case R.id.btn_rotate:  
 			try {
@@ -373,6 +343,44 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		if(position != -1){
 			setCapabilitie(position);
 		}
+	}
+	
+	public void continuePic(){
+		resetCusorFocus();
+		CameraManager.get().startPreview(true);
+		mShowPic.setVisibility(View.GONE);
+		updateBtnState(false);
+	}
+	
+	public void savePic(){
+		final List<WaterMarkPosition> waterMarkPos = mWaterMarkHelper.getWaterMarkPosition((View)mWaterMarkAdapter.getItem(mSelectPos));
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				int viewWidth = mCameraLayout.getWidth();
+				int viewHeight = mCameraLayout.getHeight();
+				Bitmap newBitmap = BitmapUtil.composeBitmap(viewWidth,viewHeight,mOriginalBitmap,waterMarkPos);
+				Logger.debugPrint("onPictureTaken"+" save width="+newBitmap.getWidth()+" height="+newBitmap.getHeight());
+				ContentResolver resolver = getContentResolver();
+				String fileName = System.currentTimeMillis() + "";
+				String filePath = CommonUtil.writeFile(fileName + "", CommonUtil.Bitmap2Bytes(newBitmap));
+				int fileLength = (int)(new File(filePath).length());
+				int what = CameraHandler.SAVE_BITMAP_SUCCESS;
+				Uri uri = CommonUtil.insertBitmap(getApplicationContext(), resolver, fileName, filePath, fileLength, mOrientation);
+				if(uri == null){
+					filePath = null;
+					what = CameraHandler.SAVE_BITMAP_FAIL;
+				}else{
+					Message msg = Message.obtain();
+					Bundle bundle = new Bundle();
+					bundle.putString("file_path", filePath);
+					bundle.putString("file_name", fileName);
+					msg.setData(bundle);
+					msg.what = what;
+					mHandler.sendMessage(msg);
+				}
+			}
+		}).start();
 	}
 	
 	@Override
@@ -410,6 +418,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 				mOriginalBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
 				bitmap.recycle();
 			}
+			updateBtnState(true);
 	}
 	
 	private static int getExifOrientation(int orientation) {
@@ -428,8 +437,16 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
         }
     }
 	
-	private int mOrientation;
-
+	private void changeOrientation(int rotation){
+		  if(mBottomView != null){
+			  mBottomView.setRotate(rotation);
+		  }
+		  if(mSlidBarBuildHelper != null){
+			  mSlidBarBuildHelper.setRotate(rotation);
+			  mSlidBarBuildHelper.closeSlidBar();			  
+		  }
+	}
+	
 	class CameraOrientationEventListener extends OrientationEventListener{
 
 		public CameraOrientationEventListener(Context context) {
@@ -437,40 +454,26 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		}
 		@Override
 		public void onOrientationChanged(int orientation) {
-		    if (orientation == ORIENTATION_UNKNOWN) {
+		    
+			if (orientation == ORIENTATION_UNKNOWN) {
                 return;
             }
-		    mOrientation = roundOrientation(orientation, mOrientation);
-            Configuration config = getResources().getConfiguration();
-            int rotation = getWindowManager().getDefaultDisplay().getRotation();
+		    int or = CommonUtil.roundOrientation(orientation, mOrientation);
+		    if(or == mOrientation){
+		    	return ;
+		    }else{
+		    	mOrientation = or;
+		    	if(mOrientation == 270){
+		    		changeOrientation(90);
+		    		System.out.println("mOrientaion="+mOrientation);
+		    	}else if(mOrientation == 0){
+		    		changeOrientation(-90);
+		    		System.out.println("mOrientaion="+mOrientation);
+		    	}
+		    }
 		}
 	}
 	
-	// Orientation hysteresis amount used in rounding, in degrees
-    public static final int ORIENTATION_HYSTERESIS = 5;
-	
-	/**
-     * Rounds the orientation so that the UI doesn't rotate if the user
-     * holds the device towards the floor or the sky
-     * @param orientation        New orientation
-     * @param orientationHistory Previous orientation
-     * @return Rounded orientation
-     */
-    public static int roundOrientation(int orientation, int orientationHistory) {
-        boolean changeOrientation = false;
-        if (orientationHistory == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            changeOrientation = true;
-        } else {
-            int dist = Math.abs(orientation - orientationHistory);
-            dist = Math.min(dist, 360 - dist);
-            changeOrientation = (dist >= 45 + ORIENTATION_HYSTERESIS);
-        }
-        if (changeOrientation) {
-            return ((orientation + 45) / 90 * 90) % 360;
-        }
-        return orientationHistory;
-    }
-
 	
 	private static int mRotation = 90;
 	
@@ -478,7 +481,6 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
      * Returns the orientation of the display
      * In our case, since we're locked in Landscape, it should always
      * be 90
-     *
      * @param activity
      * @return Orientation angle of the display
      */
@@ -503,66 +505,19 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
         return mRotation;
     }
 	
-	@Override
-	public void onPageScrollStateChanged(int arg0) {
-		
-	}
-
-	@Override
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
-	}
-
-	@Override
-	public void onPageSelected(int position) {
-		generateWatermarkData(position);
-	}
+	private int mSelectPos;
 	
-	private Bitmap mCurrentBitmap;
-	private int[] mLocation;
-	
-	private void generateWatermarkData(int position) {
-		
-		View view = mViews.get(position);
-		ImageView iv = (ImageView) view.findViewById(R.id.iv_watermark);
-		if(mLocation != null){
-			mLocation[0] = 0;
-			mLocation[1] = 0;
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		synchronized (Object.class) {
+			mSelectPos = arg2;
 		}
-		mLocation[0] = iv.getLeft();
-		mLocation[1] = iv.getBottom();
-		Log.i("aaaaaaaaaaaaaaaaabc", "mLocation: "+mLocation[1]);
-		mCurrentBitmap = ((BitmapDrawable)iv.getDrawable()).getBitmap();
-		mLocation[1] = mLocation[1] - iv.getDrawable().getBounds().bottom;
-		Log.i("aaaaaaaaaaaaaaaaabc", "mLocation: "+mLocation[1]);
-		Log.i("aaaaaaaaaaaaaaaaabc", "x: "+mCurrentBitmap.getWidth()+"y: "+mCurrentBitmap.getHeight());
-		Log.i("aaaaaaaaaaaaaabc", "ix: "+iv.getWidth()+"iy: "+iv.getHeight());
 	}
-	
-	public class MyAdapter extends PagerAdapter {
 
-		@Override  
-        public boolean isViewFromObject(View arg0, Object arg1) {  
-            return arg0 == arg1;  
-        }  
-        @Override  
-        public int getCount() {  
-            return mViews.size();  
-        }  
-        @Override  
-        public void destroyItem(ViewGroup container, int position, Object object) {  
-            container.removeView(mViews.get(position));  
-        }  
-        
-        @Override  
-        public int getItemPosition(Object object) {  
-            return super.getItemPosition(object);  
-        }  
-
-        @Override  
-        public Object instantiateItem(ViewGroup container, int position) {  
-        	container.addView(mViews.get(position), 0);//���ҳ��  
-            return mViews.get(position);  
-        } 
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		
 	}
 	
 }

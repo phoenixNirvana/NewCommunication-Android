@@ -1,0 +1,36 @@
+diff a/leyingkepaizhao/src/com/lechat/camera/data/CameraManager.java b/leyingkepaizhao/src/com/lechat/camera/data/CameraManager.java	(rejected hunks)
+@@ -124,33 +124,33 @@
+         	if (camera != null) {
+         		FlashlightManager.disableFlashlight();
+         		camera.release();
+         		camera = null;
+         	}
+ 		}
+ 	}
+ 
+ 	/**
+ 	 * Asks the camera hardware to begin drawing preview frames to the screen.
+ 	 */
+ 	public void startPreview(boolean isChangeBtnState) {
++		requestAutoFocus(mHandler);
+         synchronized (mannObj) {
+         	if (camera != null && !previewing) {
+         		camera.startPreview();
+         		previewing = true;
+         	}else{
+         		return;
+         	}
+ 		}
+-        requestAutoFocus(mHandler);
+         if (onPreviewListener != null && isChangeBtnState) {
+         	onPreviewListener.onPreview(previewing);
+         }
+ 	}
+ 
+ 	/**
+ 	 * Tells the camera to stop drawing preview frames.
+ 	 */
+ 	public  void stopPreview(boolean isChangeBtnState) {
+ 		 synchronized (mannObj) {
+ 			 if (camera != null && previewing) {
+ 				 camera.stopPreview();

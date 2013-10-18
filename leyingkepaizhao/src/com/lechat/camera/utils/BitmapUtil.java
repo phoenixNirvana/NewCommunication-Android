@@ -1,5 +1,10 @@
 package com.lechat.camera.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import com.lechat.camera.data.WaterMarkPosition;
 import com.lechat.utils.Logger;
 
 import android.graphics.Bitmap;
@@ -7,18 +12,71 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.util.Log;
 
 public class BitmapUtil {
 
-	/**
-	 * 
-	 * 
+	
+	public static Bitmap composeBitmap(int viewWidth,int viewHeight,Bitmap bottomBitmap,List<WaterMarkPosition> waterMarkPos){
+		
+		if(waterMarkPos == null){
+			return bottomBitmap;
+		}
+		List<WaterMarkPosition> drawWaterMarkPos = new ArrayList<WaterMarkPosition>();
+		drawWaterMarkPos.addAll(waterMarkPos);
+		int n = drawWaterMarkPos.size();
+		for(int i = 0; i < n; i++){
+		    WaterMarkPosition waterMarkPosition = drawWaterMarkPos.get(i);
+			float xRatio = (float)waterMarkPosition.getPositionX() / viewWidth;
+		    float yRatio = (float)waterMarkPosition.getPositionY() / viewHeight;
+		    waterMarkPosition.setPositionX((int) (bottomBitmap.getWidth() * xRatio));
+		    waterMarkPosition.setPositionY((int) (bottomBitmap.getHeight() * yRatio));
+		}
+		return createBitmap(bottomBitmap,drawWaterMarkPos,viewWidth);
+	}
+	
+	private static Bitmap createBitmap(Bitmap srcBitmap,List<WaterMarkPosition> drawWaterMarkPos,int viewWidth) {
+		if (srcBitmap == null || drawWaterMarkPos == null) {
+			return null;
+		}
+		// 分别获取宽和高
+		int srcWidth = srcBitmap.getWidth();
+		int srcHeight = srcBitmap.getHeight();
+		Bitmap bgBitmap = Bitmap.createBitmap(srcWidth, srcHeight, Config.ARGB_8888);
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);
+		Canvas canvas = new Canvas(bgBitmap);
+		canvas.drawBitmap(srcBitmap, 0, 0, paint);
+		
+		int size = drawWaterMarkPos.size();
+		for(int i = 0;i < size; i++){
+			WaterMarkPosition waterMarkPos = drawWaterMarkPos.get(i);
+			float scale = (float)srcWidth / viewWidth;
+			int dstWidth;
+			int dstHeight;
+			if(waterMarkPos.getDrawable() != null){
+				Bitmap dstBitmap = ((BitmapDrawable)waterMarkPos.getDrawable()).getBitmap();
+				dstWidth = dstBitmap.getWidth();
+				dstHeight = dstBitmap.getHeight();
+				Matrix matrix = new Matrix();
+				matrix.postScale(scale, scale);
+				matrix.postTranslate(waterMarkPos.getPositionX(), waterMarkPos.getPositionY());
+				canvas.drawBitmap(dstBitmap, matrix, paint);
+			}else if(waterMarkPos.getStr() == null){
+				canvas.drawText(waterMarkPos.getStr(),waterMarkPos.getPositionX(), waterMarkPos.getPositionY(), paint);
+			}
+		}
+		canvas.save(Canvas.ALL_SAVE_FLAG);
+		canvas.restore();
+		return bgBitmap;
+	}
+	
+/*	*//**
 	 * @param bitmap
 	 * @return
-	 */
+	 *//*
 	public static Bitmap createBitmap(Bitmap src, Bitmap dst,int x,int y,float scale) {
 		if (src == null || dst == null) {
 			return null;
@@ -32,9 +90,9 @@ public class BitmapUtil {
 		int targetW = (int) (scale * srcWidth);
 		float newScale = (float)targetW / dstWidth;
         System.out.println(" ");
-		/*float widthRatio = (float)(srcWidth - x)/ dstWidth;
+		float widthRatio = (float)(srcWidth - x)/ dstWidth;
 		float heightRatio = (float)(srcHeight - y)/ dstHeight;
-		float ratio = widthRatio > heightRatio ? widthRatio : heightRatio;*/
+		float ratio = widthRatio > heightRatio ? widthRatio : heightRatio;
 		Matrix matrix = new Matrix();
 		matrix.postScale(newScale, newScale);
 		matrix.postTranslate(x, y);
@@ -54,7 +112,7 @@ public class BitmapUtil {
 		// store
 		cv.restore();
 		return newb;
-	}
+	}*/
 
 	public static Bitmap decodeYUV422P(byte[] yuv422p, int width, int height)
 			throws NullPointerException, IllegalArgumentException {
