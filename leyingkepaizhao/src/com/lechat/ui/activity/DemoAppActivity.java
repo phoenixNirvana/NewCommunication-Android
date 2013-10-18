@@ -30,7 +30,7 @@ import android.widget.EditText;
 import com.lechat.R;
 import com.lechat.client.MyChatManager;
 import com.lechat.client.ServiceManager;
-import com.lechat.client.XmppManager.IChatMessageListener;
+import com.lechat.interfaces.IChatMessageListener;
 
 /**
  * This is an androidpn client demo application.
@@ -62,31 +62,31 @@ public class DemoAppActivity extends Activity {
         
         final String target = "zoushuai1@127.0.0.1/Spark 2.6.3";
         
-        chatManager.addChatMessageListener(target, new IChatMessageListener() {
-			
-			@Override
-			public void processMessage(Message msg) { 
-				Log.i("DemoAppActivity", "msg body : "+msg.getBody() + " from : "+msg.getFrom());
-			}
-		});
+//        chatManager.addChatMessageListener(target, new IChatMessageListener() {
+//			
+//			@Override
+//			public void processMessage(Message msg) { 
+//				Log.i("DemoAppActivity", "msg body : "+msg.getBody() + " from : "+msg.getFrom());
+//			}
+//		});
         
         sendBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-				try {
-					Chat chat = chatManager.createChat(target);
-					
-					chat.sendMessage(etInput.getText().toString());
-					
-					chatManager.output(target);
-					
-					chatManager.getFile();
-					
-				} catch (XMPPException e) {
-					e.printStackTrace();
-				}
+//				try {
+//					Chat chat = chatManager.createChat(target);
+//					
+//					chat.sendMessage(etInput.getText().toString());
+//					
+//					chatManager.output(target);
+//					
+//					chatManager.getFile();
+//					
+//				} catch (XMPPException e) {
+//					e.printStackTrace();
+//				}
 				
 				
 			}

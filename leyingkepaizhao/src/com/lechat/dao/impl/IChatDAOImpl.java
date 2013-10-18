@@ -1,12 +1,15 @@
 package com.lechat.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.androidpn.bean.ChatBean;
 import com.lechat.dao.IEntityDAO;
+import com.lechat.database.DBHelper;
 import com.lechat.database.DBManager;
 
 public class IChatDAOImpl implements IEntityDAO<ChatBean> {
@@ -16,8 +19,6 @@ public class IChatDAOImpl implements IEntityDAO<ChatBean> {
 	private DBManager dbManager;
 	
 	private int count;
-	
-	private static final String TABLE_NAME = "chatTable";
 	
 	public IChatDAOImpl(DBManager dbManager) {
 		this.dbManager = dbManager;
@@ -29,13 +30,13 @@ public class IChatDAOImpl implements IEntityDAO<ChatBean> {
 		
 		boolean flag = false;
 		ContentValues values = new ContentValues();
-		values.put("from", chat.getFrom());
-		values.put("to", chat.getTo());
+		values.put("from_id", chat.getFrom());
+//		values.put("to", chat.getTo());
 		values.put("body", chat.getBody());
 		values.put("direction", chat.getDirection());
-		values.put("type", chat.getType());
+//		values.put("type", chat.getType());
 		
-		long count = mDatabase.insert(TABLE_NAME, null, values);
+		long count = mDatabase.insert(DBHelper.TABLE_MESSAGE, null, values);
 		if(count > 0){
 			flag = true;
 		}
@@ -51,7 +52,7 @@ public class IChatDAOImpl implements IEntityDAO<ChatBean> {
 		values.put("read_status", chat.getReadStatus());
 		values.put("send_status", chat.getSendStatus());
 		
-		long count = mDatabase.update(TABLE_NAME, values, "_id=?", new String[]{chat.getId()} );
+		long count = mDatabase.update(DBHelper.TABLE_MESSAGE, values, "_id=?", new String[]{chat.getId()} );
 		if(count > 0){
 			flag = true;
 		}
@@ -64,7 +65,7 @@ public class IChatDAOImpl implements IEntityDAO<ChatBean> {
 		
 		boolean flag = false;
 		
-		int count = mDatabase.delete(TABLE_NAME, "_id=?", new String[]{chatId + ""});
+		int count = mDatabase.delete(DBHelper.TABLE_MESSAGE, "_id=?", new String[]{chatId + ""});
 		
 		if(count > 0){
 			flag = true;
@@ -82,7 +83,7 @@ public class IChatDAOImpl implements IEntityDAO<ChatBean> {
 	@Override
 	public List<ChatBean> findAll(int currentPage, int lineSize, String keyWord) throws Exception {
 		
-//		mDatabase.query(TABLE_NAME, null, "from=?", new String[]{"zoushuai"}, groupBy, having, orderBy, limit)
+		Cursor c = mDatabase.query(DBHelper.TABLE_MESSAGE, null, null, null, null, null, null, null);
 		
 		return null;
 	}
@@ -91,6 +92,31 @@ public class IChatDAOImpl implements IEntityDAO<ChatBean> {
 	public int getAllCount(String keyWord) throws Exception {
 		
 		return 0;
+	}
+
+	@Override
+	public Cursor findAll() {
+		
+		Cursor cursor = mDatabase.query(DBHelper.TABLE_MESSAGE, null, null, null, null, null, null);
+		
+		return cursor;
+	}
+
+	@Override
+	public List<ChatBean> findAll2() {
+		List<ChatBean> chats = new ArrayList<ChatBean>();
+		Cursor cursor = mDatabase.query(DBHelper.TABLE_MESSAGE, null, null, null, null, null, null);
+		if(cursor != null){
+			while (cursor.moveToNext()) {
+				ChatBean chatBean = new ChatBean();
+				chatBean.setBody(cursor.getString(cursor.getColumnIndex("body")));  
+				chatBean.setFrom(cursor.getString(cursor.getColumnIndex("from_id")));  
+				chatBean.setDirection(cursor.getInt(cursor.getColumnIndex("direction")));  
+				chats.add(chatBean);
+			}
+			cursor.close();
+		}
+		return chats;
 	}
 
 }

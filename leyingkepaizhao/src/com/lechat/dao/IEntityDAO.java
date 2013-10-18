@@ -2,6 +2,8 @@ package com.lechat.dao;
 
 import java.util.List;
 
+import android.database.Cursor;
+
 import com.androidpn.bean.ChatBean;
 
 public interface IEntityDAO<T> {
@@ -17,4 +19,7 @@ public interface IEntityDAO<T> {
 	List<T> findAll(int currentPage, int lineSize, String keyWord) throws Exception;
 	
 	int getAllCount(String keyWord) throws Exception;
+	
+	Cursor findAll();
+	List<T> findAll2();
 }

@@ -46,7 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
 			
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_MESSAGE +  
 					"(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-					"source_user_id VARCHAR, date DATE, body VARCHAR, type INTEGER)");
+					"source_user_id VARCHAR, date DATE, body VARCHAR, type INTEGER, from_id VARCHAR, direction INTEGER)");
 			
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NOTSEND +  
 					"(msg_id VARCHAR, target_user_id VARCHAR, send_count INTEGER)");
