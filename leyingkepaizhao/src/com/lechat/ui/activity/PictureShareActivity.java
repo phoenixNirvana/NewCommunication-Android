@@ -74,6 +74,7 @@ public class PictureShareActivity extends Activity implements OnClickListener {
 			WeiXinHelper.getInstance().shareWXToAllFriend(PictureShareActivity.this, "", "", "www.baidu.com");
 			break;
 		case R.id.btn_continue_take_photos:
+			CameraActivity.CONTINUE_PIC = true;
 			finish();
 			break;
 		default:

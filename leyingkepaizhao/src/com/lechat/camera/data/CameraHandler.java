@@ -62,7 +62,7 @@ public final class CameraHandler extends Handler {
     	  intent.putExtra("file_path", filePath);
     	  intent.putExtra("file_name", fileName);
     	  activity.startActivity(intent);
-    	  activity.continuePic();
+    	//  activity.continuePic();
     	  break;
       case SAVE_BITMAP_FAIL:
     	  activity.closeProgressDialog();

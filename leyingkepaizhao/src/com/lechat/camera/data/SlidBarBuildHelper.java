@@ -123,7 +123,7 @@ public class SlidBarBuildHelper implements OnClickListener{
 		textView.setBackgroundColor(Color.RED);
 		textView.setText(item.getItemName());
 		textView.setGravity(Gravity.CENTER);
-		LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(mItemWidth,LayoutParams.WRAP_CONTENT);
+		LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(mItemWidth,LayoutParams.MATCH_PARENT);
 		textParams.topMargin = CommonUtil.dip2px(mContext, 2);
 		rlayout.addView(textView,textParams);
 		rlayout.setOnClickListener(this);

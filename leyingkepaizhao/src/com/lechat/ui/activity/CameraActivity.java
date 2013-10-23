@@ -55,6 +55,7 @@ import com.lechat.utils.Logger;
 public class CameraActivity extends BaseActivity implements OnClickListener,PictureCallback
 														,OnItemSelectedListener{
 	private static final int PHOTO_ALBUM = 1;
+	public static final boolean CONTINUE_PIC = false;
 	private int mCurrentPosition = 2; 
 	private boolean isInitlized = false;
 	private int mOrientation;
@@ -159,12 +160,14 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		super.onResume();
 		Logger.debugPrint("onResume");
 		mCameraOrientationEventListener.enable();
+		if(CONTINUE_PIC){
+			continuePic();
+		}
 		if(!isInitlized){
 			initCamera();
 			isInitlized = true;
 		}else{
 			if(isPause){
-				hideShowPicView();
 				isPause = false;
 				switchCamera(false);
 			}
@@ -174,8 +177,6 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 	public void hideShowPicView(){
 		if(mShowPic != null)
 			   mShowPic.setVisibility(View.GONE);
-			if(mOriginalBitmap != null)
-				mOriginalBitmap.recycle();
 	}
 	
 	public void clearCusorFocus(){
@@ -241,6 +242,12 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		CameraManager.get().closeDriver();
 	}
 
+	private void releaseBitmap(){
+		if(mOriginalBitmap != null)
+			mOriginalBitmap.recycle();
+		if(mResultBitmap != null)
+			mResultBitmap.recycle();
+	}
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -346,6 +353,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 					CameraManager.get().stopPreview(false);
 					CameraManager.get().closeDriver();
 				}
+				hideShowPicView();
 				switchCamera(false);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -361,6 +369,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		resetCusorFocus();
 		CameraManager.get().startPreview(true);
 		hideShowPicView();
+		releaseBitmap();
 		updateBtnState(false);
 	}
 	
@@ -376,6 +385,8 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 				ContentResolver resolver = getContentResolver();
 				String fileName = System.currentTimeMillis() + "";
 				String filePath = CommonUtil.writeFile(fileName + "", CommonUtil.Bitmap2Bytes(newBitmap));
+				if(newBitmap != null)
+					newBitmap.recycle();
 				int fileLength = (int)(new File(filePath).length());
 				int what = CameraHandler.SAVE_BITMAP_SUCCESS;
 				Uri uri = CommonUtil.insertBitmap(getApplicationContext(), resolver, fileName, filePath, fileLength, mOrientation);

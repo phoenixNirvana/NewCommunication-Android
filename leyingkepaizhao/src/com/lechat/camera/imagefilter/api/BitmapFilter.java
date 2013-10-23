@@ -31,6 +31,7 @@ public class BitmapFilter {
 	 * @param styeNo, 效果id
 	 */
 	public static Bitmap changeStyle(Bitmap bitmap, int styleNo) {
+		System.out.println("   styleNo="+styleNo);
 		Bitmap newBitmap = null;
 		switch(styleNo){
 		case GRAY_STYLE:
