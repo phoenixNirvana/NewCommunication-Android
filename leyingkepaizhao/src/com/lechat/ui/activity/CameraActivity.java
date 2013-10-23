@@ -55,7 +55,7 @@ import com.lechat.utils.Logger;
 public class CameraActivity extends BaseActivity implements OnClickListener,PictureCallback
 														,OnItemSelectedListener{
 	private static final int PHOTO_ALBUM = 1;
-	public static final boolean CONTINUE_PIC = false;
+	public static boolean CONTINUE_PIC = false;
 	private int mCurrentPosition = 2; 
 	private boolean isInitlized = false;
 	private int mOrientation;
