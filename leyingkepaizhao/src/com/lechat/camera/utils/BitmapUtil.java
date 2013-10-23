@@ -1,7 +1,6 @@
 package com.lechat.camera.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.lechat.camera.data.WaterMarkPosition;
@@ -15,6 +14,7 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.view.View;
 
 public class BitmapUtil {
 
@@ -185,4 +185,12 @@ public class BitmapUtil {
 		return inSampleSize;
 	}
 
+	public static Bitmap convertViewToBitmap(View view, int bitmapWidth,
+			int bitmapHeight) {
+		Bitmap bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight,
+				Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+		view.draw(canvas);
+		return bitmap;
+	}
 }

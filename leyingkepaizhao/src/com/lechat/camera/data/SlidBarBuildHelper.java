@@ -8,27 +8,22 @@ import android.graphics.drawable.BitmapDrawable;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lechat.R;
 import com.lechat.camera.widget.BottomView;
-import com.lechat.camera.widget.RotateImageView;
 import com.lechat.camera.widget.RotateLinearLayout;
-import com.lechat.camera.widget.RotateRelativeLayout;
 import com.lechat.camera.widget.SlidBar;
 import com.lechat.utils.CommonUtil;
 
-public class SlidBarBuildHelper {
+public class SlidBarBuildHelper implements OnClickListener{
 
 	private List<SlidBarItem> mSlidBarItems;
 	private SlidBar mSlidBar; 
@@ -38,7 +33,7 @@ public class SlidBarBuildHelper {
 	private int mScreenHeight;
 	private View rootView;
 	private Context mContext;
-	
+	private ClickListener mClickListener;
 	private PopupWindow mPopupWindow;
 	
 	public void setContext(Context context){
@@ -118,12 +113,12 @@ public class SlidBarBuildHelper {
 		RotateLinearLayout rlayout = new RotateLinearLayout(mContext);
 		rlayout.setOrientation(LinearLayout.VERTICAL);
 		SlidBarItem item = mSlidBarItems.get(position);
-		ImageView rotateImageView = new ImageView(mContext);
+		/*ImageView rotateImageView = new ImageView(mContext);
 		rotateImageView.setImageResource(item.getItemNRes());
 		LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(mItemWidth,LayoutParams.WRAP_CONTENT);
 		imageParams.weight = 1;		
 		imageParams.gravity = Gravity.CENTER;
-		rlayout.addView(rotateImageView,imageParams);
+		rlayout.addView(rotateImageView,imageParams);*/
 		TextView textView = new TextView(mContext);
 		textView.setBackgroundColor(Color.RED);
 		textView.setText(item.getItemName());
@@ -131,11 +126,30 @@ public class SlidBarBuildHelper {
 		LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(mItemWidth,LayoutParams.WRAP_CONTENT);
 		textParams.topMargin = CommonUtil.dip2px(mContext, 2);
 		rlayout.addView(textView,textParams);
+		rlayout.setOnClickListener(this);
+		rlayout.setTag(item.getItemNRes());
 		return rlayout;
 	}
 	
 	public void setRotate(int rotate){
 	    if(mSlidBar != null)
 		   mSlidBar.setRotate(rotate);
+	}
+	
+	public void setListener(ClickListener clickListener){
+		mClickListener = clickListener;
+	}
+	
+	public interface ClickListener{
+		void onClick(int pos);
+	}
+
+	@Override
+	public void onClick(View v) {
+		
+		if(mClickListener != null){
+			int pos = (Integer) v.getTag();
+			mClickListener.onClick(pos);
+		}
 	}
 }

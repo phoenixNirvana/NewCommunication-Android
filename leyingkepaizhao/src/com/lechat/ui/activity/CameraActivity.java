@@ -9,33 +9,28 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Message;
-import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.lechat.R;
 import com.lechat.adapter.WaterMarkAdapter;
@@ -43,10 +38,12 @@ import com.lechat.camera.data.CameraHandler;
 import com.lechat.camera.data.CameraManager;
 import com.lechat.camera.data.CameraManager.OnPreviewListener;
 import com.lechat.camera.data.SlidBarBuildHelper;
+import com.lechat.camera.data.SlidBarBuildHelper.ClickListener;
 import com.lechat.camera.data.SlidBarItem;
 import com.lechat.camera.data.WaterMarkBuildHelp;
 import com.lechat.camera.data.WaterMarkHelper;
 import com.lechat.camera.data.WaterMarkPosition;
+import com.lechat.camera.imagefilter.api.BitmapFilter;
 import com.lechat.camera.utils.BitmapUtil;
 import com.lechat.camera.widget.BottomView;
 import com.lechat.camera.widget.CameraLayout;
@@ -135,15 +132,22 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		mSlidBarBuildHelper = new SlidBarBuildHelper();
 		
 		List<SlidBarItem> items = new ArrayList<SlidBarItem>();
-		items.add(new SlidBarItem("水印一",R.drawable.expression));
-		items.add(new SlidBarItem("水印二",R.drawable.expression));
-		items.add(new SlidBarItem("水印三",R.drawable.expression));
-		items.add(new SlidBarItem("水印四",R.drawable.expression));
-		items.add(new SlidBarItem("水印五",R.drawable.expression));
+		items.add(new SlidBarItem("原始",-1));
+		items.add(new SlidBarItem("黑白",BitmapFilter.GRAY_STYLE));
+		items.add(new SlidBarItem("怀旧",BitmapFilter.OLD_STYLE));
+		items.add(new SlidBarItem("冰冻",BitmapFilter.ICE_STYLE));
+		items.add(new SlidBarItem("版画",BitmapFilter.BLOCK_STYLE));
+		items.add(new SlidBarItem("LOMO",BitmapFilter.LOMO_STYLE));
 		mLayoutMan = (LinearLayout) findViewById(R.id.layout_main);
+		mWaterMarkHelper = new WaterMarkHelper();
 		mSlidBarBuildHelper.setSlidBarData(items);
 		mSlidBarBuildHelper.setContext(this);
-		mWaterMarkHelper = new WaterMarkHelper();
+		mSlidBarBuildHelper.setListener(new ClickListener() {
+			@Override
+			public void onClick(int pos) {
+				new ImageFilterTask(CameraActivity.this,pos).execute();
+			}
+		});
 	}
 	
 	private void updateBtnState(boolean preview){
@@ -160,10 +164,18 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 			isInitlized = true;
 		}else{
 			if(isPause){
+				hideShowPicView();
 				isPause = false;
 				switchCamera(false);
 			}
 		}
+	}
+	
+	public void hideShowPicView(){
+		if(mShowPic != null)
+			   mShowPic.setVisibility(View.GONE);
+			if(mOriginalBitmap != null)
+				mOriginalBitmap.recycle();
 	}
 	
 	public void clearCusorFocus(){
@@ -348,7 +360,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 	public void continuePic(){
 		resetCusorFocus();
 		CameraManager.get().startPreview(true);
-		mShowPic.setVisibility(View.GONE);
+		hideShowPicView();
 		updateBtnState(false);
 	}
 	
@@ -359,7 +371,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 			public void run() {
 				int viewWidth = mCameraLayout.getWidth();
 				int viewHeight = mCameraLayout.getHeight();
-				Bitmap newBitmap = BitmapUtil.composeBitmap(viewWidth,viewHeight,mOriginalBitmap,waterMarkPos);
+				Bitmap newBitmap = BitmapUtil.composeBitmap(viewWidth,viewHeight,mResultBitmap,waterMarkPos);
 				Logger.debugPrint("onPictureTaken"+" save width="+newBitmap.getWidth()+" height="+newBitmap.getHeight());
 				ContentResolver resolver = getContentResolver();
 				String fileName = System.currentTimeMillis() + "";
@@ -389,6 +401,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 	}
 
 	private Bitmap mOriginalBitmap;
+	private Bitmap mResultBitmap;
 	
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {
@@ -416,6 +429,7 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 				Matrix m = new Matrix();
 				m.setRotate(degree, (float) bitmap.getWidth() / 2, (float) bitmap.getHeight() / 2);
 				mOriginalBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
+				mResultBitmap = mOriginalBitmap;
 				bitmap.recycle();
 			}
 			updateBtnState(true);
@@ -438,13 +452,13 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
     }
 	
 	private void changeOrientation(int rotation){
-		  if(mBottomView != null){
+		/*  if(mBottomView != null){
 			  mBottomView.setRotate(rotation);
 		  }
 		  if(mSlidBarBuildHelper != null){
 			  mSlidBarBuildHelper.setRotate(rotation);
 			  mSlidBarBuildHelper.closeSlidBar();			  
-		  }
+		  }*/
 	}
 	
 	class CameraOrientationEventListener extends OrientationEventListener{
@@ -520,4 +534,44 @@ public class CameraActivity extends BaseActivity implements OnClickListener,Pict
 		
 	}
 	
+	public View getSelectView(){
+		return (View) mWaterMarkAdapter.getItem(mSelectPos);
+	}
+	
+	public class ImageFilterTask extends AsyncTask<Void, Void, Bitmap> {
+
+		private Activity activity = null;
+        private int mPos;
+		public ImageFilterTask(Activity activity, int pos) {
+			this.activity = activity;
+			this.mPos = pos;
+		}
+
+		public Bitmap doInBackground(Void... params) {
+			try {
+				Bitmap bitmap = mOriginalBitmap;
+			    return BitmapFilter.changeStyle(bitmap, mPos);
+			} catch (Exception e) {
+			} finally {
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			System.out.println("check result="+result);
+			if (result != null) {
+				super.onPostExecute(result);
+				mResultBitmap = result;
+				mShowPic.setVisibility(View.VISIBLE);
+				mShowPic.setImageBitmap(result);
+				closeProgressDialog();
+			}
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			showProgressDialog();
+		}
+	}
 }
